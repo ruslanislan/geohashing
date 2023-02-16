@@ -1,5 +1,5 @@
 name: geohashing
-description: A new Flutter project.
+description: Geohash library for dart
 version: 0.0.1
 homepage: https://github.com/ruslanislan/geohashing
 
