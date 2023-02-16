@@ -10,7 +10,7 @@ part of 'geohashing.dart';
 /// Must be between 1 and 9.
 /// @returns Array of Geohash Base32 strings.
 
-getHashesWithinBboxBase32({
+Iterable<String> getHashesWithinBboxBase32({
   required double minLat,
   required double minLng,
   required double maxLat,
@@ -75,10 +75,10 @@ List<int> getHashesWithinBboxInt({
 
   final List<int> hashesInt = [];
 
-  for (var lat = fromBbox.minLat + error.lat;
+  for (var lat = fromBbox.minLat + error.error!.lat;
       lat < toBbox.maxLat;
       lat += latStep) {
-    for (var lng = fromBbox.minLng + error.lng;
+    for (var lng = fromBbox.minLng + error.error!.lng;
         lng < toBbox.maxLng;
         lng += lngStep) {
       hashesInt.add(
@@ -119,7 +119,7 @@ String? encodeBboxBase32({
   final hashInt = hashIntObject.hashInt;
   final bitDepth = hashIntObject.bitDepth;
   final shiftOrder = bitDepth % _base32BitsPerChar;
-  final shiftedHashInt = (hashInt / (2 ^ shiftOrder)).floor();
+  final shiftedHashInt = (hashInt / pow(2, shiftOrder)).floor();
   final length = (bitDepth / _base32BitsPerChar).floor();
 
   return intToBase32(shiftedHashInt, length);
@@ -131,7 +131,9 @@ String? encodeBboxBase32({
 Bbox decodeBboxBase32(String hashBase32) {
   final hashInt = base32ToInt(hashBase32);
   return decodeBboxInt(
-      hashInt: hashInt, bitDepth: hashBase32.length * _base32BitsPerChar);
+    hashInt: hashInt,
+    bitDepth: hashBase32.length * _base32BitsPerChar,
+  );
 }
 
 /// Finds a Geohash integer that represents the smallest cell which the given bbox fits into.
@@ -154,6 +156,7 @@ HashInt? encodeBboxInt({
 
   final lat = minLat + (maxLat - minLat) / 2;
   final lng = minLng + (maxLng - minLng) / 2;
+
   var hashInt = encodeIntNoValidation(
     lat: lat,
     lng: lng,
@@ -197,7 +200,3 @@ Bbox decodeBboxIntNoValidation(int hashInt, int bitDepth) {
     maxLng: coordinates.lng + coordinates.error!.lng,
   );
 }
-
-
-
-

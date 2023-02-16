@@ -3,7 +3,7 @@ part of 'geohashing.dart';
 /// Calculates all neighbors' Base32 Geohashes.
 /// @param hashBase32 Base32 string (Geohash version of Base32)
 /// @returns A {@link Neighbors} with Base32 Geohashes starting from North
-Iterable<Map<Direction, String>> getNeighborsBase32(String hashBase32) {
+Map<Direction, String> getNeighborsBase32(String hashBase32) {
   final precision = hashBase32.length;
   final hashInt = base32ToInt(hashBase32);
 
@@ -11,8 +11,10 @@ Iterable<Map<Direction, String>> getNeighborsBase32(String hashBase32) {
     hashInt: hashInt,
     bitDepth: precision * _base32BitsPerChar,
   );
-  final neighborsBase32Entries = neighborsInt.map(
-    (e) => {e.keys.first: intToBase32(e.values.first, precision)},
+  final Map<Direction, String> neighborsBase32Entries = {};
+
+  neighborsInt.forEach(
+    (key, value) => neighborsBase32Entries[key] = intToBase32(value, precision),
   );
   return neighborsBase32Entries;
 }
@@ -23,19 +25,19 @@ Iterable<Map<Direction, String>> getNeighborsBase32(String hashBase32) {
 /// The bigger the value, the smaller the encoded cell.
 /// Can be either even or odd. Must be between 1 and 52.
 /// @returns A {@link Neighbors} with Geohash integers starting from North.
-Iterable<Map<Direction, int>> getNeighborsInt(
+Map<Direction, int> getNeighborsInt(
     {required int hashInt, int bitDepth = _maxBitDepth}) {
   assertBitDepthIsValid(bitDepth);
 
-  final neighborsIntEntries = Direction.values.map(
-    (direction) => {
-      direction: getNeighborInt(
-        hashInt: hashInt,
-        direction: direction,
-        bitDepth: bitDepth,
-      ),
-    },
-  );
+  final Map<Direction, int> neighborsIntEntries = {};
+
+  for (var direction in Direction.values) {
+    neighborsIntEntries[direction] = getNeighborInt(
+      hashInt: hashInt,
+      direction: direction,
+      bitDepth: bitDepth,
+    );
+  }
   return neighborsIntEntries;
 }
 
@@ -43,7 +45,7 @@ Iterable<Map<Direction, int>> getNeighborsInt(
 /// @param hashBase32 Base32 string (Geohash version of Base32) whose neighbor should be found.
 /// @param direction Specifies which neighbor should be found (e.g. northern, southwestern, etc.)
 /// @returns Neighbor's Base32 Geohash.
-getNeighborBase32(String hashBase32, Direction direction) {
+String getNeighborBase32(String hashBase32, Direction direction) {
   final precision = hashBase32.length;
   final hashInt = base32ToInt(hashBase32);
   final neighborHashInt = getNeighborInt(

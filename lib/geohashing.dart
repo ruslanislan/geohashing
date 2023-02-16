@@ -1,5 +1,7 @@
 library geohashing;
 
+import 'dart:math';
+
 part 'constants.dart';
 
 part 'bboxes.dart';
@@ -90,7 +92,7 @@ int encodeIntNoValidation({
   for (int i = bitDepth - 1; i >= 0; i--) {
     int bit;
 
-    if ((bitDepth - i) % 2 == 0) {
+    if ((bitDepth - i) % 2 == 1) {
       lngError /= 2;
 
       if (lngResidual >= 0) {
@@ -125,13 +127,14 @@ Coordinates decodeIntNoValidation(int hashInt, int bitDepth) {
   var lngValue = 0.0;
   var lngError = _longitudeMaxValue;
 
-  int exponent = 2 ^ bitDepth;
+  int exponent = pow(2, bitDepth).toInt();
 
   for (int i = bitDepth - 1; i >= 0; i--) {
     exponent ~/= 2;
+
     final bit = (tail / exponent).floor();
 
-    if ((bitDepth - i) % 2 == 0) {
+    if ((bitDepth - i) % 2 == 1) {
       lngError /= 2;
 
       if (bit == 1) {

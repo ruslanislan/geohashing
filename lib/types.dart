@@ -6,6 +6,23 @@ class Coordinates {
   final Coordinates? error;
 
   Coordinates(this.lat, this.lng, this.error);
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is Coordinates &&
+          runtimeType == other.runtimeType &&
+          lat == other.lat &&
+          lng == other.lng &&
+          error == other.error;
+
+  @override
+  int get hashCode => lat.hashCode ^ lng.hashCode ^ error.hashCode;
+
+  @override
+  String toString() {
+    return 'Coordinates{lat: $lat, lng: $lng, error: $error}';
+  }
 }
 
 class HashInt {
@@ -27,6 +44,11 @@ class Bbox {
     required this.maxLat,
     required this.maxLng,
   });
+
+  @override
+  String toString() {
+    return 'Bbox{minLat: $minLat, minLng: $minLng, maxLat: $maxLat, maxLng: $maxLng}';
+  }
 }
 
 enum Direction {
